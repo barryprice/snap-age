@@ -1,13 +1,24 @@
 name: age-bp
+title: age
 base: core26
 adopt-info: age
+license: BSD-3-Clause
 summary: a simple, modern and secure file encryption tool
 description: |
   age is a simple, modern and secure file encryption tool, format, and Go library.
 
   It features small explicit keys, post-quantum support, no config options, and UNIX-style composability.
+contact:
+  - https://github.com/barryprice
+issues:
+  - https://github.com/barryprice/snap-age/issues
+source-code:
+  - https://github.com/FiloSottile/age
+website:
+  - https://age-encryption.org/
 grade: stable
 confinement: strict
+
 platforms:
   amd64:
     build-on:
@@ -35,7 +46,7 @@ apps:
 parts:
   age:
     plugin: nil
-    source: https://github.com/FiloSottile/age
+    source: https://github.com/FiloSottile/age.git
     source-type: git
     build-snaps:
       - go/1.25/stable
