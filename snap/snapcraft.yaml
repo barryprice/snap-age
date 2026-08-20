@@ -8,6 +8,13 @@ description: |
   age is a simple, modern and secure file encryption tool, format, and Go library.
 
   It features small explicit keys, post-quantum support, no config options, and UNIX-style composability.
+
+  For convenient aliases:
+
+  sudo snap alias age-bp.age age
+  sudo snap alias age-bp.age-inspect age-inspect
+  sudo snap alias age-bp.age-keygen age-keygen
+
 contact:
   - https://github.com/barryprice
 issues:
@@ -18,14 +25,6 @@ website:
   - https://age-encryption.org/
 grade: stable
 confinement: strict
-
-platforms:
-  amd64:
-    build-on:
-      - amd64
-  arm64:
-    build-on:
-      - arm64
 
 apps:
   age:
