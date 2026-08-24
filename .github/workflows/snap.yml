@@ -1,0 +1,43 @@
+name: snapcraft
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Merge gate only: verify the snap still builds on pushes/pull requests so
+  # merges can't break the build. Building AND publishing is handled by
+  # snapcraft.io (which schedules its own builds and pushes to latest/edge),
+  # so this workflow never publishes and this repo is never tagged.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the snap
+        uses: snapcore/action-build@v1
+        id: build
+      - name: Upload the snap artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: age-bp
+          path: ${{ steps.build.outputs.snap }}
+
+  # Run Snapcraft's linters against the built snap. This is best-effort:
+  # switch continue-on-error to false once the snap is lint-clean.
+  lint:
+    needs: build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: age-bp
+          path: snap
+      - name: Install snapcraft
+        run: sudo snap install snapcraft --classic
+      - name: Lint the built snap
+        run: sudo snapcraft lint snap/*.snap

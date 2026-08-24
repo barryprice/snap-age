@@ -12,7 +12,9 @@ description: |
   For convenient aliases:
 
   sudo snap alias age-bp.age age
+
   sudo snap alias age-bp.age-inspect age-inspect
+
   sudo snap alias age-bp.age-keygen age-keygen
 
 contact:
@@ -30,17 +32,14 @@ apps:
   age:
     command: bin/age
     plugs: [home, removable-media]
-    aliases: [age]
 
   age-keygen:
     command: bin/age-keygen
     plugs: [home, removable-media]
-    aliases: [age-keygen]
 
   age-inspect:
     command: bin/age-inspect
     plugs: [home, removable-media]
-    aliases: [age-inspect]
 
 parts:
   age:
@@ -51,13 +50,43 @@ parts:
       - go/1.25/stable
     override-build: |
       cd "${CRAFT_PART_SRC}"
+
+      # Fetch all tags so the clone isn't left tag-less (e.g. shallow clones).
       git fetch --tags --force origin
-      latest_tag="$(git describe --tags --match 'v[0-9]*.[0-9]*.[0-9]*' --abbrev=0)"
-      git checkout "${latest_tag}"
+
+      # Pick the highest semantic-version release tag independently of which
+      # commit the clone checked out, so we never silently build an older
+      # release than is currently published upstream.
+      latest_tag="$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n 1)"
+      if [ -z "${latest_tag}" ]; then
+        echo "No semantic-version release tag found upstream" >&2
+        exit 1
+      fi
+      git checkout --detach "${latest_tag}"
+
       mkdir -p "${CRAFT_PART_INSTALL}/bin"
-      CGO_ENABLED=0 GOTOOLCHAIN=local go build \
+      # GOTOOLCHAIN=auto keeps the Go toolchain in sync with the version pinned
+      # by the upstream go.mod ("toolchain goX.Y.Z"); if the base Go 1.25 is
+      # older than the module requires, the exact toolchain is downloaded and
+      # used automatically.
+      CGO_ENABLED=0 GOTOOLCHAIN=auto go build \
         -trimpath -mod=readonly \
         -ldflags "-X main.Version=${latest_tag}" \
         -o "${CRAFT_PART_INSTALL}/bin/" \
         ./cmd/age ./cmd/age-keygen ./cmd/age-inspect
-      craftctl set version="$(${CRAFT_PART_INSTALL}/bin/age --version)"
+
+      # Safety gate: run the freshly built binary so we never package a snap
+      # whose binary doesn't execute and report a version. Deriving the snap
+      # version from the binary's own --version output (rather than the release
+      # tag string) also keeps it grounded in what the binary actually reports
+      # if upstream ever changes how the version is computed.
+      snap_version="$("${CRAFT_PART_INSTALL}/bin/age" --version)" || {
+        echo "age --version failed" >&2
+        exit 1
+      }
+      [ -n "${snap_version}" ] || {
+        echo "age --version produced no output" >&2
+        exit 1
+      }
+      # Snap versions conventionally omit the leading "v" from the release tag.
+      craftctl set version="${snap_version#v}"
