@@ -43,5 +43,7 @@ jobs:
         run: sudo snap install lxd
       - name: Initialise LXD
         run: sudo lxd init --auto
+      - name: Ensure LXD networking isn't blocked
+        run: sudo iptables -P FORWARD ACCEPT
       - name: Lint the built snap
         run: sudo snapcraft lint snap/*.snap
