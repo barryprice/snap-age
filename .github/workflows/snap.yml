@@ -41,5 +41,7 @@ jobs:
         run: sudo snap install snapcraft --classic
       - name: Install LXD
         run: sudo snap install lxd
+      - name: Initialise LXD
+        run: sudo lxd init --auto
       - name: Lint the built snap
         run: sudo snapcraft lint snap/*.snap
