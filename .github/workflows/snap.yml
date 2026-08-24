@@ -39,5 +39,7 @@ jobs:
           path: snap
       - name: Install snapcraft
         run: sudo snap install snapcraft --classic
+      - name: Install LXD
+        run: sudo snap install lxd
       - name: Lint the built snap
         run: sudo snapcraft lint snap/*.snap
