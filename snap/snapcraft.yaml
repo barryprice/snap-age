@@ -47,22 +47,22 @@ parts:
     source: https://github.com/FiloSottile/age.git
     source-type: git
     build-snaps:
+      # Base Go toolchain, pinned to match the minor in upstream's go.mod
+      # `toolchain` directive (currently go1.25.x). Bump manually when upstream
+      # raises it — Renovate can't track another repo's go.mod.
       - go/1.25/stable
     override-build: |
       cd "${CRAFT_PART_SRC}"
 
-      # Fetch all tags so the clone isn't left tag-less (e.g. shallow clones).
-      git fetch --tags --force origin
+      # Pinned upstream release tag. Renovate bumps this line automatically
+      # when FiloSottile/age publishes a new release (see renovate.json).
+      # renovate: datasource=github-releases depName=FiloSottile/age
+      age_version="v1.3.1"
 
-      # Pick the highest semantic-version release tag independently of which
-      # commit the clone checked out, so we never silently build an older
-      # release than is currently published upstream.
-      latest_tag="$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n 1)"
-      if [ -z "${latest_tag}" ]; then
-        echo "No semantic-version release tag found upstream" >&2
-        exit 1
-      fi
-      git checkout --detach "${latest_tag}"
+      # Ensure the pinned tag exists locally (shallow clones may omit it),
+      # then build exactly that release.
+      git fetch --tags --force origin
+      git checkout --detach "${age_version}"
 
       mkdir -p "${CRAFT_PART_INSTALL}/bin"
       # GOTOOLCHAIN=auto keeps the Go toolchain in sync with the version pinned
@@ -71,7 +71,7 @@ parts:
       # used automatically.
       CGO_ENABLED=0 GOTOOLCHAIN=auto go build \
         -trimpath -mod=readonly \
-        -ldflags "-X main.Version=${latest_tag}" \
+        -ldflags "-X main.Version=${age_version}" \
         -o "${CRAFT_PART_INSTALL}/bin/" \
         ./cmd/age ./cmd/age-keygen ./cmd/age-inspect
 

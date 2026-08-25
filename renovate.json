@@ -4,6 +4,16 @@
     "config:recommended",
     "helpers:pinGitHubActionDigests"
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["snap/snapcraft.yaml"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+age_version=\"(?<currentValue>[^\"]+)\""
+      ],
+      "versioningTemplate": "semver"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
