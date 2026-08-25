@@ -2,7 +2,9 @@
 
 A Snap package of [age](https://age-encryption.org/) (GitHub:
 [FiloSottile/age](https://github.com/FiloSottile/age)) — a simple, modern and
-secure file encryption tool.
+secure file encryption tool, available from the Snap Store here:
+
+https://snapcraft.io/age-bp
 
 > **Community / unofficial.** This is an unofficial, community-maintained snap.
 > The snap `name` is `age-bp`; the `title` is `age` so the software is
@@ -39,8 +41,6 @@ the highest `vX.Y.Z` tag from upstream, so a new release is picked up
 automatically on the next snap build.
 
 ## Installing
-
-From the `edge` track:
 
 On a snap that has been promoted to `stable`:
 
