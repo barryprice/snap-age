@@ -36,4 +36,6 @@ jobs:
       # already set up by action-build, so lint reuses them instead of
       # provisioning a second runner.
       - name: Lint the built snap
-        run: sudo snapcraft lint "${{ steps.build.outputs.snap }}"
+        run: sudo snapcraft lint "${STEPS_BUILD_OUTPUTS_SNAP}"
+        env:
+          STEPS_BUILD_OUTPUTS_SNAP: ${{ steps.build.outputs.snap }}
