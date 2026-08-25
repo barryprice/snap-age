@@ -34,11 +34,11 @@ To enable those aliases, after installing:
   sudo snap alias age-bp.age-keygen age-keygen
   ```
 
-The binaries are built statically (`CGO_ENABLED=0`) from the source of the
-[matching upstream release](https://github.com/FiloSottile/age/releases). The
-snap's version tracks the latest upstream release — the build recipe resolves
-the highest `vX.Y.Z` tag from upstream, so a new release is picked up
-automatically on the next snap build.
+The binaries are built statically (`CGO_ENABLED=0`) from the source of a
+[pinned upstream release](https://github.com/FiloSottile/age/releases)
+(currently `v1.3.1`). The pinned tag lives in `snap/snapcraft.yaml`; Renovate
+bumps it via a pull request whenever FiloSottile/age publishes a new release,
+so upgrades are reviewed rather than picked up silently on the next build.
 
 ## Installing
 
@@ -94,9 +94,9 @@ snapcraft lint
 
 [`.github/workflows/snap.yml`](.github/workflows/snap.yml) is CI-only:
 
-- Builds the snap on every push / pull request, and uploads the `.snap` as an
-  artifact.
-- Runs `snapcraft lint` against the built snap (best-effort by default).
+- Builds the snap on every push / pull request.
+- Lints the built snap with `snapcraft lint` in the same job (a hard gate:
+  lint failures fail the build).
 
 This workflow is a **merge gate only** — it never publishes. Building **and**
 publishing to `latest/edge` is handled by snapcraft.io, which schedules its
