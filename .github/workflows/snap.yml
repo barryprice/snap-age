@@ -27,11 +27,6 @@ jobs:
       - name: Build the snap
         uses: snapcore/action-build@3bdaa03e1ba6bf59a65f84a751d943d549a54e79 # v1
         id: build
-      - name: Upload the snap artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: age-bp
-          path: ${{ steps.build.outputs.snap }}
       # snapcraft + LXD (installed + `lxd init --auto` + FORWARD ACCEPT) are
       # already set up by action-build, so lint reuses them instead of
       # provisioning a second runner.
