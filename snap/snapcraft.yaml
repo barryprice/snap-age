@@ -57,7 +57,7 @@ parts:
       # Pinned upstream release tag. Renovate bumps this line automatically
       # when FiloSottile/age publishes a new release (see renovate.json).
       # renovate: datasource=github-releases depName=FiloSottile/age
-      age_version="v1.3.1"
+      age_version="v1.3.2"
 
       # Ensure the pinned tag exists locally (shallow clones may omit it),
       # then build exactly that release.
