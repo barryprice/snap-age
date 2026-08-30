@@ -35,10 +35,10 @@ To enable those aliases, after installing:
   ```
 
 The binaries are built statically (`CGO_ENABLED=0`) from the source of a
-[pinned upstream release](https://github.com/FiloSottile/age/releases)
-(currently `v1.3.1`). The pinned tag lives in `snap/snapcraft.yaml`; Renovate
-bumps it via a pull request whenever FiloSottile/age publishes a new release,
-so upgrades are reviewed rather than picked up silently on the next build.
+[pinned upstream release](https://github.com/FiloSottile/age/releases).
+The pinned tag lives in `snap/snapcraft.yaml`; Renovate bumps it via a pull
+request whenever FiloSottile/age publishes a new release, so upgrades are
+reviewed rather than picked up silently on the next build.
 
 ## Installing
 
